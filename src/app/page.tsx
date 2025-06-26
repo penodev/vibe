@@ -1,13 +1,13 @@
-import { prisma } from "@/lib/db";
+"use client";
 
-const Page = async () => {
-  const users = await prisma.user.findMany();
+import { useTRPCQuery } from "@/hooks/use-query";
 
-  return (
-    <div className='text-red-500 font-bold'>
-      {users.map((user) => user.name)}
-    </div>
+const Page = () => {
+  const { data } = useTRPCQuery((trpc) =>
+    trpc.createAI.queryOptions({ text: "poo" })
   );
+
+  return <div className='text-red-500 font-bold'>{data?.greeting}</div>;
 };
 
 export default Page;
