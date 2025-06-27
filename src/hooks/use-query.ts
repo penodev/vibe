@@ -1,4 +1,7 @@
 import {
+  useMutation,
+  UseMutationOptions,
+  UseMutationResult,
   useQuery,
   UseQueryOptions,
   UseQueryResult,
@@ -20,4 +23,19 @@ export const useTRPCQuery = <
   const trpc = useTRPC();
   const queryOptions = getQueryOptions(trpc);
   return useQuery(queryOptions);
+};
+
+export const useTRPCMutation = <
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+>(
+  getMutationOptions: (
+    trpc: TRPC
+  ) => UseMutationOptions<TData, TError, TVariables, TContext>
+): UseMutationResult<TData, TError, TVariables, TContext> => {
+  const trpc = useTRPC();
+  const mutationOptions = getMutationOptions(trpc);
+  return useMutation(mutationOptions);
 };
