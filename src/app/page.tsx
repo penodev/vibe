@@ -2,17 +2,21 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useTRPCMutation } from "@/hooks/use-query";
+import { useTRPCMutation, useTRPCQuery } from "@/hooks/use-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const Page = () => {
   const [value, setValue] = useState("");
 
-  const invoke = useTRPCMutation((trpc) =>
-    trpc.invoke.mutationOptions({
-      onSuccess: () => toast.success("Invoked successfully"),
-      onError: () => toast.error("Failed to invoke"),
+  const { data: messages } = useTRPCQuery((trpc) =>
+    trpc.messages.getMany.queryOptions()
+  );
+
+  const createMessage = useTRPCMutation((trpc) =>
+    trpc.messages.create.mutationOptions({
+      onSuccess: () => toast.success("Message created"),
+      onError: () => toast.error("Failed to create message"),
     })
   );
 
@@ -21,11 +25,12 @@ const Page = () => {
       <Input value={value} onChange={(e) => setValue(e.target.value)} />
       <Button
         className='w-fit'
-        disabled={invoke.isPending}
-        onClick={() => invoke.mutate({ value })}
+        disabled={createMessage.isPending}
+        onClick={() => createMessage.mutate({ value })}
       >
-        Invoke
+        Prompt
       </Button>
+      {JSON.stringify(messages, null, 2)}
     </div>
   );
 };
