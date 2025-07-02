@@ -30,7 +30,7 @@ export const codeAgentFunction = inngest.createFunction(
     });
 
     await step.run("save-result", async () => {
-      createResultMessage(result, sandboxUrl);
+      createResultMessage(result, sandboxUrl, event.data.projectId);
     });
 
     return {

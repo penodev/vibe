@@ -20,7 +20,7 @@ export const createCodeAgent = (sandboxId: string) =>
     name: "code-agent",
     description: "An expert coding agent",
     system: PROMPT,
-    model: gemini({ model: "gemini-2.5-flash" }),
+    model: gemini({ model: "gemini-2.5-pro" }),
     tools: [
       createTerminalTool(sandboxId),
       createCommandFilesTool(sandboxId),
@@ -59,7 +59,8 @@ export const createAgentNetwork = (codeAgent: Agent<AgentState>) =>
 
 export const createResultMessage = async (
   result: NetworkRun<AgentState>,
-  sandboxUrl: string
+  sandboxUrl: string,
+  projectId: string
 ) => {
   const isError =
     !result.state.data.summary ||
@@ -68,6 +69,7 @@ export const createResultMessage = async (
   if (isError) {
     return await prisma.message.create({
       data: {
+        projectId,
         content: "Something went wrong. Please try again.",
         role: "ASSISTANT",
         type: "ERROR",
@@ -77,6 +79,7 @@ export const createResultMessage = async (
 
   return await prisma.message.create({
     data: {
+      projectId,
       content: result.state.data.summary,
       role: "ASSISTANT",
       type: "RESULT",
