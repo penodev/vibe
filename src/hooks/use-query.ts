@@ -5,6 +5,9 @@ import {
   useQuery,
   UseQueryOptions,
   UseQueryResult,
+  useSuspenseQuery,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
@@ -23,6 +26,21 @@ export const useTRPCQuery = <
   const trpc = useTRPC();
   const queryOptions = getQueryOptions(trpc);
   return useQuery(queryOptions);
+};
+
+export const useTRPCQuerySuspense = <
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends readonly unknown[] = readonly unknown[]
+>(
+  getQueryOptions: (
+    trpc: TRPC
+  ) => UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+): UseSuspenseQueryResult<TData, TError> => {
+  const trpc = useTRPC();
+  const queryOptions = getQueryOptions(trpc);
+  return useSuspenseQuery(queryOptions);
 };
 
 export const useTRPCMutation = <

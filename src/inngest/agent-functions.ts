@@ -20,7 +20,7 @@ export const createCodeAgent = (sandboxId: string) =>
     name: "code-agent",
     description: "An expert coding agent",
     system: PROMPT,
-    model: gemini({ model: "gemini-2.5-pro" }),
+    model: gemini({ model: "gemini-2.5-flash" }),
     tools: [
       createTerminalTool(sandboxId),
       createCommandFilesTool(sandboxId),
