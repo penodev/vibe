@@ -1,30 +1,48 @@
+import { Fragment } from "@/generated/prisma";
 import { useTRPCQuerySuspense } from "@/hooks/use-query";
 import { MessageCard } from "@/modules/projects/ui/components/message-card";
 import { MessageForm } from "@/modules/projects/ui/components/message-form";
+import { MessageLoading } from "@/modules/projects/ui/components/message-loading";
 import { useEffect, useRef } from "react";
 
 interface Props {
   projectId: string;
+  activeFragment: Fragment | null;
+  setActiveFragment: (fragment: Fragment | null) => void;
 }
 
-export const MessagesContainer = ({ projectId }: Props) => {
+export const MessagesContainer = ({
+  projectId,
+  activeFragment,
+  setActiveFragment,
+}: Props) => {
   const buttonRef = useRef<HTMLDivElement>(null);
   const { data: messages } = useTRPCQuerySuspense((trpc) =>
-    trpc.messages.getMany.queryOptions({ projectId })
+    trpc.messages.getMany.queryOptions(
+      { projectId },
+      {
+        // TODO: temporary line message update
+        refetchInterval: 5000,
+      }
+    )
   );
 
-  useEffect(() => {
-    const lastAssistantMessage = messages.findLast(
-      (message) => message.role === "ASSISTANT"
-    );
-    if (lastAssistantMessage) {
-      // TODO SET ACTIVE FRAGMENT
-    }
-  }, [messages]);
+  // TODO: this is causing problem
+  // useEffect(() => {
+  //   const lastAssistantMessageWithFragment = messages.findLast(
+  //     (message) => message.role === "ASSISTANT" && message.fragment
+  //   );
+  //   if (lastAssistantMessageWithFragment) {
+  //     setActiveFragment(lastAssistantMessageWithFragment.fragment);
+  //   }
+  // }, [messages, setActiveFragment]);
 
   useEffect(() => {
     buttonRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
+
+  const lastMessage = messages[messages.length - 1];
+  const isLastMessageUser = lastMessage?.role === "USER";
 
   return (
     <div className='flex flex-col flex-1 min-h-0'>
@@ -36,11 +54,12 @@ export const MessagesContainer = ({ projectId }: Props) => {
             role={message.role}
             fragment={message.fragment}
             createdAt={message.createdAt}
-            isActiveFragment={false}
-            onFragmentClick={() => {}}
+            isActiveFragment={message.fragment?.id === activeFragment?.id}
+            onFragmentClick={() => setActiveFragment(message.fragment)}
             type={message.type}
           />
         ))}
+        {isLastMessageUser && <MessageLoading />}
         <div ref={buttonRef} />
       </div>
       <div className='relative p-3 pt-1'>
