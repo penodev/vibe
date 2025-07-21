@@ -6,17 +6,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
-  DropdownMenuSubContent,
-  DropdownMenuRadioItem,
-  DropdownMenuRadioGroup,
 } from "@/components/ui/dropdown-menu";
 import { useTRPCQuerySuspense } from "@/hooks/use-query";
-import { ChevronDownIcon, ChevronLeftIcon, SunMoonIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
+import { AppearanceDropdown } from "@/components/appearance-dropdown";
 
 interface Props {
   projectId: string;
@@ -26,8 +20,6 @@ export const ProjectHeader = ({ projectId }: Props) => {
   const { data: project } = useTRPCQuerySuspense((trpc) =>
     trpc.projects.getOne.queryOptions({ id: projectId })
   );
-
-  const { theme, setTheme } = useTheme();
 
   return (
     <header className='p-2 flex justify-between items-center border-b'>
@@ -51,27 +43,7 @@ export const ProjectHeader = ({ projectId }: Props) => {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger className='gap-2'>
-              <SunMoonIcon className='size-4 text-muted-foreground' />
-              <span>Appearance</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-                  <DropdownMenuRadioItem value='light'>
-                    <span>Light</span>
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='dark'>
-                    <span>Dark</span>
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='system'>
-                    <span>System</span>
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
+          <AppearanceDropdown isSubMenu />
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

@@ -1,5 +1,6 @@
 "use client";
 
+import { AppearanceDropdown } from "@/components/appearance-dropdown";
 import { LogoIcon } from "@/components/logo-icon";
 import { Button } from "@/components/ui/button";
 import { useTRPCQuery } from "@/hooks/use-query";
@@ -13,7 +14,11 @@ export const ProjectsList = () => {
 
   return (
     <div className='w-full bg-white dark:bg-sidebar rounded-xl p-8 border flex flex-col gap-y-6 sm:gap-y-4'>
-      <h2 className='text-2xl font-semibold'>Saved Vibes</h2>
+      <div className='flex gap-6'>
+        <h2 className='text-2xl font-semibold'>Saved Vibes</h2>
+        <AppearanceDropdown />
+      </div>
+
       <div className='grid grid-cols-1 sm:grid-cols-3 gap-6'>
         {projects?.length === 0 && (
           <div className='col-span-full text-center'>
